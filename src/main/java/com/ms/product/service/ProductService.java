@@ -29,4 +29,16 @@ public class ProductService {
     public Product findById(Long id) {
         return productRepository.findById(id).orElse(null);
     }
+
+    @Transactional
+    public Product update(Long id, Product product) {
+        product.setId(id);
+        return productRepository.save(product);
+    }
+
+    @Transactional
+    public void deleteById(Long id) {
+        productRepository.deleteById(id);
+    }
+
 }
