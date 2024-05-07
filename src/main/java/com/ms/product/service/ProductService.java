@@ -30,15 +30,23 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
-    @Transactional
-    public Product update(Long id, Product product) {
-        product.setId(id);
-        return productRepository.save(product);
-    }
+//    @Transactional
+//    public Product update(Long id, Product product) {
+//        product.setId(id);
+//        return productRepository.save(product);
+//    }
 
     @Transactional
     public void deleteById(Long id) {
         productRepository.deleteById(id);
     }
 
+    public Product update(Long id, String name, String image, String description, Double price) {
+        Product product = findById(id);
+        product.setName(name);
+        product.setImage(image);
+        product.setDescription(description);
+        product.setPrice(price);
+        return productRepository.save(product);
+    }
 }

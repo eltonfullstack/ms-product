@@ -2,6 +2,10 @@ package com.ms.product.web.controller;
 
 import com.ms.product.entity.Product;
 import com.ms.product.service.ProductService;
+import com.ms.product.web.dto.ProductCreateDto;
+import com.ms.product.web.dto.ProductResponseDto;
+import com.ms.product.web.dto.ProductUpdateDto;
+import com.ms.product.web.dto.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +22,9 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> save(@RequestBody Product product) {
-        /* Product createdProduct = productService.save(product); **/
-        Product createdProduct = productService.save(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+    public ResponseEntity<ProductResponseDto> save(@RequestBody ProductCreateDto productDto) {
+        Product createdProduct = productService.save(ProductMapper.toProduct(productDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProductMapper.toProductDto(createdProduct));
     }
 
     @GetMapping
@@ -31,15 +34,20 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<ProductResponseDto> findById(@PathVariable("id") Long id) {
         Product product = productService.findById(id);
-        return ResponseEntity.status((HttpStatus.OK)).body(product);
+        return ResponseEntity.status((HttpStatus.OK)).body(ProductMapper.toProductDto(product));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable("id") Long id, @RequestBody Product product) {
-        Product updatedProduct = productService.update(id, product);
-        return ResponseEntity.status((HttpStatus.OK)).body(updatedProduct);
+    public ResponseEntity<ProductResponseDto> update(@PathVariable("id") Long id, @RequestBody ProductUpdateDto productDto) {
+        Product updatedProduct = productService.update(
+                id, productDto.getName(),
+                productDto.getImage(),
+                productDto.getDescription(),
+                productDto.getPrice());
+
+        return ResponseEntity.status((HttpStatus.OK)).body(ProductMapper.toProductDto(updatedProduct));
     }
 
     @DeleteMapping("/{id}")
