@@ -28,9 +28,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll() {
+    public ResponseEntity<List<ProductResponseDto>> findAll() {
         List<Product> products = productService.findAll();
-        return ResponseEntity.status((HttpStatus.OK)).body(products);
+        return ResponseEntity.status((HttpStatus.OK)).body(ProductMapper.toListDto(products));
     }
 
     @GetMapping("/{id}")
