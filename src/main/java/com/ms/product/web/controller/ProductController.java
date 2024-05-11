@@ -6,6 +6,7 @@ import com.ms.product.web.dto.ProductCreateDto;
 import com.ms.product.web.dto.ProductResponseDto;
 import com.ms.product.web.dto.ProductUpdateDto;
 import com.ms.product.web.dto.mapper.ProductMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponseDto> save(@RequestBody ProductCreateDto productDto) {
+    public ResponseEntity<ProductResponseDto> save(@Valid @RequestBody ProductCreateDto productDto) {
         Product createdProduct = productService.save(ProductMapper.toProduct(productDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(ProductMapper.toProductDto(createdProduct));
     }
@@ -40,7 +41,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> update(@PathVariable("id") Long id, @RequestBody ProductUpdateDto productDto) {
+    public ResponseEntity<ProductResponseDto> update(@PathVariable("id") Long id, @Valid @RequestBody ProductUpdateDto productDto) {
         Product updatedProduct = productService.update(
                 id, productDto.getName(),
                 productDto.getImage(),

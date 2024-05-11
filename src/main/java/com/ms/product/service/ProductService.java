@@ -1,9 +1,12 @@
 package com.ms.product.service;
 
 import com.ms.product.entity.Product;
+import com.ms.product.exception.EntityProductNotFoundException;
+import com.ms.product.exception.ProductUniqueException;
 import com.ms.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +19,12 @@ public class ProductService {
 
     @Transactional
     public Product save(Product product) {
-        Product createdProduct = productRepository.save(product);
-        return productRepository.save(product);
+        try {
+            Product createdProduct = productRepository.save(product);
+            return productRepository.save(product);
+        } catch (DataIntegrityViolationException e) {
+            throw new ProductUniqueException(String.format("Product with name %s already exists", product.getName()));
+        }
     }
 
     @Transactional
@@ -27,14 +34,10 @@ public class ProductService {
 
     @Transactional
     public Product findById(Long id) {
-        return productRepository.findById(id).orElse(null);
+        return productRepository.findById(id).orElseThrow(
+                () -> new EntityProductNotFoundException(String.format("Product with id %s not found", id))
+        );
     }
-
-//    @Transactional
-//    public Product update(Long id, Product product) {
-//        product.setId(id);
-//        return productRepository.save(product);
-//    }
 
     @Transactional
     public void deleteById(Long id) {
